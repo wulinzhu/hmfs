@@ -1,3 +1,5 @@
+// Manage in-memory struct of HMFS
+
 #ifndef _LINUX_HMFS_H
 #define _LINUX_HMFS_H
 
@@ -253,6 +255,7 @@ struct hmfs_inode_info {
 	uint8_t i_height;
 };
 
+/* Runtime statistic of HMFS */
 struct hmfs_stat_info {
 	struct list_head stat_list;
 	struct hmfs_sb_info *sbi;
@@ -300,9 +303,10 @@ extern const struct inode_operations hmfs_symlink_inode_operations;
 extern const struct inode_operations hmfs_special_inode_operations;
 extern const struct address_space_operations hmfs_aops_xip;
 
+/* Get the on-disk super block of HMFS */
 static inline struct hmfs_super_block *HMFS_RAW_SUPER(struct hmfs_sb_info *sbi)
 {
-	return (struct hmfs_super_block *)(sbi->virt_addr);
+	return (struct hmfs_super_block *) (sbi->virt_addr);
 }
 
 static inline struct hmfs_inode_info *HMFS_I(struct inode *inode)
@@ -344,7 +348,7 @@ static inline void *ADDR(struct hmfs_sb_info *sbi, unsigned long logic_addr)
 
 static inline block_t L_ADDR(struct hmfs_sb_info *sbi, void *ptr)
 {
-	return (block_t) ((char *)ptr - (char *)sbi->virt_addr);
+	return (block_t) ((char *) ptr - (char *) sbi->virt_addr);
 }
 
 static inline struct hmfs_sb_info *HMFS_I_SB(struct inode *inode)
@@ -474,14 +478,18 @@ static inline void unlock_mmap(struct hmfs_sb_info *sbi)
 }
 
 #ifdef CONFIG_HMFS_DEBUG
-#define hmfs_dbg(fmt, ...) printk(KERN_INFO"%s-%d:"fmt, \
-							__FUNCTION__, __LINE__, ##__VA_ARGS__)
+#define hmfs_dbg(fmt, ...)  \
+    do {    \
+        printk(KERN_INFO"%s-%d:"fmt,    \
+               __FUNCTION__, __LINE__, ##__VA_ARGS__)   \
+    } while (0)
+
 #define hmfs_dbg_on(condition, fmt, ...) 	\
-			do {							\
-				if (condition) {			\
-					printk(KERN_INFO""fmt, ##__VA_ARGS__);	\
-				}	\
-			} while (0)
+    do {							\
+        if (condition) {			\
+            printk(KERN_INFO""fmt, ##__VA_ARGS__);	\
+        }	\
+    } while (0)
 
 #define hmfs_bug_on(sbi, condition)	\
 			do {					\
@@ -917,7 +925,7 @@ int init_util_function(void);
 struct posix_acl *hmfs_get_acl(struct inode *inode, int type);
 int hmfs_init_acl(struct inode *inode, struct inode *dir);
 int hmfs_acl_xattr_get(struct dentry *, const char *name, void *buffer,
-				size_t list_size, int);
+                       size_t list_size, int);
 size_t hmfs_acl_access_xattr_list(struct dentry *, char *,
 				size_t, const char *, size_t, int);
 size_t hmfs_acl_default_xattr_list(struct dentry *, char *,

@@ -402,7 +402,7 @@ static int hmfs_release_file(struct inode *inode, struct file *filp)
 }
 
 static ssize_t hmfs_file_fast_read(struct file *filp, char __user *buf,
-				size_t len, loff_t *ppos)
+                                   size_t len, loff_t *ppos)
 {
 	struct inode *inode = filp->f_inode;
 	loff_t isize = i_size_read(inode);
@@ -429,7 +429,7 @@ static ssize_t hmfs_file_fast_read(struct file *filp, char __user *buf,
 }
 
 static ssize_t hmfs_xip_file_read(struct file *filp, char __user *buf,
-				size_t len, loff_t *ppos)
+                                  size_t len, loff_t *ppos)
 {
 	int ret = 0;
 
